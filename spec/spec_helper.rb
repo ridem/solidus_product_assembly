@@ -1,9 +1,9 @@
 require 'simplecov'
 SimpleCov.start 'rails'
 
-ENV["RAILS_ENV"] = "test"
+ENV['RAILS_ENV'] = 'test'
 
-require File.expand_path("../dummy/config/environment.rb",  __FILE__)
+require File.expand_path('../dummy/config/environment.rb', __FILE__)
 
 require 'rspec/rails'
 require 'ffaker'
@@ -18,7 +18,7 @@ end
 Capybara.javascript_driver = :poltergeist
 Capybara.default_max_wait_time = 10
 
-Dir[File.join(File.dirname(__FILE__), "support/**/*.rb")].each {|f| require f }
+Dir[File.join(File.dirname(__FILE__), 'support/**/*.rb')].each { |f| require f }
 
 require 'spree/testing_support/factories'
 require 'spree/testing_support/url_helpers'
@@ -39,11 +39,11 @@ RSpec.configure do |config|
   config.before(:each) do
     Rails.cache.clear
 
-    if RSpec.current_example.metadata[:js]
-      DatabaseCleaner.strategy = :truncation
-    else
-      DatabaseCleaner.strategy = :transaction
-    end
+    DatabaseCleaner.strategy = if RSpec.current_example.metadata[:js]
+                                 :truncation
+                               else
+                                 :transaction
+                               end
 
     DatabaseCleaner.start
   end
@@ -57,5 +57,5 @@ RSpec.configure do |config|
 
   config.include FactoryGirl::Syntax::Methods
   config.include Spree::TestingSupport::UrlHelpers
-  config.example_status_persistence_file_path = "./spec/examples.txt"
+  config.example_status_persistence_file_path = './spec/examples.txt'
 end

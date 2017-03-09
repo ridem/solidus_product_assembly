@@ -1,4 +1,4 @@
-shared_context "product is ordered as individual and within a bundle" do
+shared_context 'product is ordered as individual and within a bundle' do
   let(:order) { create(:order_with_line_items) }
   let(:parts) { (1..3).map { create(:variant) } }
 

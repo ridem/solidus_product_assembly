@@ -9,8 +9,8 @@ module Spree
       product.parts.push variant
     end
 
-    context "get" do
-      it "brings part by product and variant id" do
+    context 'get' do
+      it 'brings part by product and variant id' do
         subject.class.get(product.id, variant.id).part.should == variant
       end
     end

@@ -8,7 +8,7 @@ module Spree
 
     subject { InventoryUnit.create(line_item: line_item, variant: line_item.variant, order: order) }
 
-    context 'if the unit is not part of an assembly' do      
+    context 'if the unit is not part of an assembly' do
       it 'it will return the percentage of a line item' do
         expect(subject.percentage_of_line_item).to eql(BigDecimal.new(1))
       end
@@ -25,7 +25,7 @@ module Spree
 
       it 'it will return the percentage of a line item' do
         subject.line_item = line_item
-      	expect(subject.percentage_of_line_item).to eql(BigDecimal.new(0.5, 2))
+        expect(subject.percentage_of_line_item).to eql(BigDecimal.new(0.5, 2))
       end
     end
   end

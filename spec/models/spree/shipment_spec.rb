@@ -2,7 +2,7 @@ require 'spec_helper'
 
 module Spree
   describe Shipment do
-    context "order has one product assembly" do
+    context 'order has one product assembly' do
       let(:order) { Order.create }
       let(:bundle) { create(:variant) }
       let!(:parts) { (1..2).map { create(:variant) } }
@@ -13,35 +13,35 @@ module Spree
 
       before { order.update_column :state, 'complete' }
 
-      it "shipment item cost equals line item amount" do
+      it 'shipment item cost equals line item amount' do
         expect(shipment.item_cost).to eq line_item.amount
       end
     end
 
-    context "manifests" do
-      include_context "product is ordered as individual and within a bundle"
+    context 'manifests' do
+      include_context 'product is ordered as individual and within a bundle'
 
       let(:shipments) { order.create_proposed_shipments }
 
-      context "default" do
+      context 'default' do
         let(:expected_variants) { order.variants - [bundle_variant] + bundle.parts }
 
-        it "separates variant purchased individually from the bundle one" do
+        it 'separates variant purchased individually from the bundle one' do
           expect(shipments.count).to eql 1
           shipments.first.manifest.map(&:variant).sort.should == expected_variants.sort
         end
       end
 
-      context "line items manifest" do
+      context 'line items manifest' do
         let(:expected_variants) { order.variants }
 
-        it "groups units by line_item only" do
+        it 'groups units by line_item only' do
           expect(shipments.count).to eql 1
           shipments.first.line_item_manifest.map(&:variant).sort.should == expected_variants.sort
         end
       end
 
-      context "units are not associated with a line item" do
+      context 'units are not associated with a line item' do
         let(:order) { create(:shipped_order) }
         let(:shipment) { order.shipments.first }
 
@@ -51,13 +51,13 @@ module Spree
       end
     end
 
-    context "set up new inventory units" do
+    context 'set up new inventory units' do
       let(:line_item) { create(:line_item) }
       let(:variant) { line_item.variant }
       let(:order) { line_item.order }
       let(:shipment) { create(:shipment) }
 
-      it "assigns variant, order and line_item" do
+      it 'assigns variant, order and line_item' do
         unit = shipment.set_up_inventory('on_hand', variant, order, line_item)
 
         expect(unit.line_item).to eq line_item
@@ -67,28 +67,28 @@ module Spree
       end
     end
 
-    context "unit states for variant sold as part of an assembly and separately" do
+    context 'unit states for variant sold as part of an assembly and separately' do
       let(:assembly_line_item) { create(:line_item) }
       let(:shirt) { create(:variant) }
 
       let(:assembly_shirts) do
-        5.times.map {
+        Array.new(5) do
           create(:inventory_unit,
                  variant: shirt,
                  line_item: assembly_line_item,
                  state: :on_hand)
-        }
+        end
       end
 
       let(:standalone_line_item) { create(:line_item, variant: shirt) }
 
       let(:standalone_shirts) do
-        2.times.map {
+        Array.new(2) do
           create(:inventory_unit,
                  variant: shirt,
                  line_item: standalone_line_item,
                  state: :on_hand)
-        }
+        end
       end
 
       let(:shipment) { create(:shipment) }
@@ -98,12 +98,12 @@ module Spree
         shipment.inventory_units << standalone_shirts
       end
 
-      it "set states numbers properly for all items" do
+      it 'set states numbers properly for all items' do
         shipment.manifest.each do |item|
           if item.line_item.id == standalone_line_item.id
-            expect(item.states["on_hand"]).to eq standalone_shirts.count
+            expect(item.states['on_hand']).to eq standalone_shirts.count
           else
-            expect(item.states["on_hand"]).to eq assembly_shirts.count
+            expect(item.states['on_hand']).to eq assembly_shirts.count
           end
         end
       end

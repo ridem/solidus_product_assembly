@@ -13,35 +13,35 @@ module Spree
 
       line_item.update_attributes!(quantity: 3)
       order.reload.create_proposed_shipments
-      order.finalize! 
+      order.finalize!
     end
 
     subject { OrderInventoryAssembly.new(line_item) }
 
-    context "inventory units count" do
-      it "calculates the proper value for the bundle" do
+    context 'inventory units count' do
+      it 'calculates the proper value for the bundle' do
         expected_units_count = line_item.quantity * bundle.assemblies_parts.to_a.sum(&:count)
         expect(subject.inventory_units.count).to eql(expected_units_count)
       end
     end
 
-    context "verify line item units" do
+    context 'verify line item units' do
       let!(:original_units_count) { subject.inventory_units.count }
 
-      context "quantity increases" do
+      context 'quantity increases' do
         before { subject.line_item.quantity += 1 }
 
-        it "inserts new inventory units for every bundle part" do
+        it 'inserts new inventory units for every bundle part' do
           expected_units_count = original_units_count + bundle.assemblies_parts.to_a.sum(&:count)
           subject.verify
           expect(OrderInventoryAssembly.new(line_item.reload).inventory_units.count).to eql(expected_units_count)
         end
       end
 
-      context "quantity decreases" do
+      context 'quantity decreases' do
         before { subject.line_item.quantity -= 1 }
 
-        it "remove inventory units for every bundle part" do
+        it 'remove inventory units for every bundle part' do
           expected_units_count = original_units_count - bundle.assemblies_parts.to_a.sum(&:count)
           subject.verify
 

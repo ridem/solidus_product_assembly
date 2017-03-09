@@ -2,8 +2,8 @@ require 'spec_helper'
 
 module Spree
   module Stock
-    describe AvailabilityValidator, :type => :model do
-      context "line item has no parts" do
+    describe AvailabilityValidator, type: :model do
+      context 'line item has no parts' do
         let!(:line_item) { create(:line_item, quantity: 5) }
         let!(:product) { line_item.product }
 
@@ -29,7 +29,7 @@ module Spree
         end
       end
 
-      context "line item has parts" do
+      context 'line item has parts' do
         let!(:order) { create(:order_with_line_items) }
         let(:line_item) { order.line_items.first }
         let(:product) { line_item.product }

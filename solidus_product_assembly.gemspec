@@ -1,7 +1,7 @@
 # encoding: UTF-8
 
 lib = File.expand_path('../lib/', __FILE__)
-$:.unshift lib unless $:.include?(lib)
+$LOAD_PATH.unshift lib unless $LOAD_PATH.include?(lib)
 
 require 'solidus_product_assembly/version'
 
@@ -22,7 +22,7 @@ Gem::Specification.new do |s|
   s.require_path = 'lib'
   s.requirements << 'none'
 
-  s.add_runtime_dependency 'solidus_backend', [">= 1.0", "< 3"]
+  s.add_runtime_dependency 'solidus_backend', ['>= 1.0', '< 3']
 
   s.add_development_dependency 'rspec-rails', '~> 3.4'
   s.add_development_dependency 'sqlite3'

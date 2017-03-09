@@ -8,12 +8,12 @@ module Spree
     let(:variant) { line_item.variant }
     let(:inventory) { double('order_inventory') }
 
-    context "bundle parts stock" do
+    context 'bundle parts stock' do
       let(:parts) { (1..2).map { create(:variant) } }
 
       before { product.parts << parts }
 
-      context "one of them not in stock" do
+      context 'one of them not in stock' do
         before do
           part = product.parts.first
           part.stock_items.update_all backorderable: false
@@ -27,7 +27,7 @@ module Spree
         end
       end
 
-      context "in stock" do
+      context 'in stock' do
         before do
           parts.each do |part|
             part.stock_items.first.set_count_on_hand(10)
@@ -36,14 +36,14 @@ module Spree
           expect(parts[1]).to be_in_stock
         end
 
-        it "saves line item quantity" do
+        it 'saves line item quantity' do
           line_item = order.contents.add(variant, 10)
           expect(line_item).to be_valid
         end
       end
     end
 
-    context "updates bundle product line item" do
+    context 'updates bundle product line item' do
       let(:parts) { (1..2).map { create(:variant) } }
 
       before do
@@ -52,7 +52,7 @@ module Spree
         order.finalize!
       end
 
-      it "verifies inventory units via OrderInventoryAssembly" do
+      it 'verifies inventory units via OrderInventoryAssembly' do
         OrderInventoryAssembly.should_receive(:new).with(line_item).and_return(inventory)
         inventory.should_receive(:verify).with(line_item.target_shipment)
         line_item.quantity = 2
@@ -60,8 +60,8 @@ module Spree
       end
     end
 
-    context "updates regular line item" do
-      it "verifies inventory units via OrderInventory" do
+    context 'updates regular line item' do
+      it 'verifies inventory units via OrderInventory' do
         OrderInventory.should_receive(:new).with(line_item.order, line_item).and_return(inventory)
         inventory.should_receive(:verify).with(line_item.target_shipment)
         line_item.quantity = 2

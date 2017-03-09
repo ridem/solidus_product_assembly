@@ -4,7 +4,7 @@ module Spree
       def units
         @order.line_items.flat_map do |line_item|
           line_item.quantity_by_variant.flat_map do |variant, quantity|
-            quantity.times.map { build_inventory_unit(variant, line_item) }
+            Array.new(quantity) { build_inventory_unit(variant, line_item) }
           end
         end
       end
