@@ -1,10 +1,7 @@
 Spree::Product.class_eval do
-  has_and_belongs_to_many :parts, class_name: 'Spree::Variant',
-                                  join_table: 'spree_assemblies_parts',
-                                  foreign_key: 'assembly_id', association_foreign_key: 'part_id'
-
-  has_many :assemblies_parts, class_name: 'Spree::AssembliesPart',
-                              foreign_key: 'assembly_id'
+  has_many :parts, through: :assemblies_parts
+  has_many :assemblies_parts, through: :variants_including_master,
+                              source: :parts_variants
 
   scope :individual_saled, -> { where(individual_sale: true) }
 
@@ -17,23 +14,8 @@ Spree::Product.class_eval do
 
   validate :assembly_cannot_be_part, if: :assembly?
 
-  def add_part(variant, count = 1)
-    set_part_count(variant, count_of(variant) + count)
-  end
-
-  def remove_part(variant)
-    set_part_count(variant, 0)
-  end
-
-  def set_part_count(variant, count)
-    ap = assemblies_part(variant)
-    if count > 0
-      ap.count = count
-      ap.save
-    else
-      ap.destroy
-    end
-    reload
+  def variants_or_master
+    has_variants? ? variants : [master]
   end
 
   def assembly?
@@ -47,7 +29,7 @@ Spree::Product.class_eval do
   end
 
   def assembly_cannot_be_part
-    errors.add(:can_be_part, Spree.t(:assembly_cannot_be_part)) if can_be_part
+    errors.add(:can_be_part, Spree.t(:assembly_cannot_be_part)) if can_be_part?
   end
 
   private

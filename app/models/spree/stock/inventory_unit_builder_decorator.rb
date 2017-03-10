@@ -10,15 +10,7 @@ module Spree
       end
 
       def build_inventory_unit(variant, line_item)
-        @order.inventory_units.includes(
-          variant: {
-            product: {
-              shipping_category: {
-                shipping_methods: [:calculator, { zones: :zone_members }]
-              }
-            }
-          }
-        ).build(
+        Spree::InventoryUnit.new(
           pending: true,
           variant: variant,
           line_item: line_item,

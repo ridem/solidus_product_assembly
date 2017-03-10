@@ -1,39 +1,41 @@
-<script type="text/javascript">
-  function displayRow(){
-    var row = document.getElementById("captionRow");
-    if (row.style.display == '') row.style.display = 'none';
-    else row.style.display = '';
-  }
-</script>
-
 <h4><%= Spree.t(:available_parts) %></h4>
 <table class="index">
 	<thead>
 		<tr>
   		<th><%= Spree.t(:name) %></th>
   		<th><%= Spree.t(:options) %></th>
+      <th><%= Spree.t(:variants) %></th>
   		<th><%= Spree.t(:qty) %></th>
   		<th></th>
 		</tr>
 	</thead>
 	<tbody>
-    <% @available_products.each do |product| %>
-      <tr id="<%= dom_id(product) %>">
+    <% @available_products.each do |part| %>
+      <tr id="<%= dom_id(part) %>" class="<%= "with-variants" if part.has_variants? %>">
 
-        <td><%= product.name %></td>
+        <td><%= part.name %></td>
         <td>
-          <% if product.has_variants? %>
+          <% if part.has_variants? %>
+            <%- opts = part.variants.map {|v| [variant_options(v), v.id] } %>
             <%= select_tag "part[id]",
-                options_for_select(product.variants.map { |v| [variant_options(v), v.id] }) %>
+              options_for_select(opts),
+              include_blank: Spree.t(:user_selectable), class: 'part_selector select2'
+            %>
           <% else %>
-            <%= hidden_field_tag "part[id]", product.master.id %>
+            <%= hidden_field_tag "part[id]", part.master.id %>
             <%= Spree.t(:no_variants) %>
           <% end %>
         </td>
+        <% unless @product.has_variants? %>
+          <td><%= hidden_field_tag "part[assembly_id]", @product.master.id, class: 'parts-assembly' %>Master</td>
+        <% else %>
+          <td><%= select_tag "part[assembly_id]", options_from_collection_for_select(@product.variants, "id", "options_text"), class: 'select2' %></td>
+        <% end %>
         <td><%= text_field_tag "part[count]", 1 %></td>
 		    <td class="actions">
 		      <%= link_to(icon('add') + ' ' + Spree.t(:select), 
 		                  admin_product_parts_path(@product),
+                      :data => { 'target' => dom_id(part), 'master-variant-id' => part.master.id},
 		                  :class => "add_product_part_link") %>
 		    </td>
       </tr>
@@ -43,13 +45,3 @@
     <% end %>
   </tbody>
 </table>
-
-<%= javascript_tag do %>
-  $("a.add_product_part_link").click(function(){
-    part_id_val = $('select option:selected', $(this).parent().parent()).val() ||
-                  $('input:first', $(this).parent().parent()).val();
-    params = { part_count :  $('input:last', $(this).parent().parent()).val(),
-               part_id : part_id_val};
-    return make_post_request($(this), params);
-  });
-<% end %>
