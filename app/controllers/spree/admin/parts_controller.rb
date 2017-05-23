@@ -36,7 +36,10 @@ class Spree::Admin::PartsController < Spree::Admin::BaseController
   private
 
   def save_part(part_params)
+    logger.info part_params
+    # binding.pry
     form = Spree::AssignPartToBundleForm.new(@product, part_params)
+    logger.info form
     if form.submit
       render 'spree/admin/parts/update_parts_table'
     else

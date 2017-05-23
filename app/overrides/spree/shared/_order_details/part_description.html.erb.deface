@@ -4,12 +4,11 @@
     <% item.part_line_items.each do |v| %>
     <% pli_variant = v.variant %>
     <li>
-      (<%= item.quantity * v.quantity %>)
-      <%= link_to pli_variant.name, product_path(pli_variant.product) %>
+      <%= item.quantity * v.quantity %> &times;
+      <%= pli_variant.name %>
       <% unless pli_variant.is_master? %>
         (<%= pli_variant.options_text %>)
       <% end %>
-      (<%= pli_variant.sku %>)
     </li>
     <% end %>
   </ul>

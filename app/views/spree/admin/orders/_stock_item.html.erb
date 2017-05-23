@@ -3,12 +3,12 @@
     <td class="item-image"><%= image_tag item.variant.display_image.attachment(:mini) %></td>
     <td class="item-name">
       <%= item.variant.product.name %><br><%= "(" + variant_options(item.variant) + ")" unless item.variant.option_values.empty? %>
-      <% if item.part && item.line_item %>
-        <i><%= Spree.t(:part_of_bundle, sku: item.product.sku) %></i>
+      <% if item.line_item && item.line_item.product.assembly? %>
+        <i><%= Spree.t(:part_of_bundle, sku: item.line_item.product.sku) %></i>
       <% end %>
     </td>
     <td class="item-price align-center">
-      <% if item.part %>
+      <% if item.line_item && item.line_item.product.assembly? %>
         ---
       <% else %>
         <%= item.line_item.single_money.to_html if item.line_item %>
@@ -25,14 +25,14 @@
       </td>
     <% end %>
     <td class="item-total align-center">
-      <% if item.part %>
+      <% if item.line_item && item.line_item.product.assembly? %>
         ---
       <% else %>
         <%= line_item_shipment_price(item.line_item, item.quantity) if item.line_item %>
       <% end %>
     </td>
     <td class="cart-item-delete actions" data-hook="cart_item_delete">
-      <% if !shipment.shipped? && !item.part %>
+      <% if !shipment.shipped? && !(item.line_item && item.line_item.product.assembly?) %>
         <% if can? :update, item %>
           <%= link_to '', '#', :class => 'save-item fa fa-ok no-text with-tip', :data => {'shipment-number' => shipment.number, 'variant-id' => item.variant.id, :action => 'save'}, :title => Spree.t('actions.save'), :style => 'display: none' %>
           <%= link_to '', '#', :class => 'cancel-item fa fa-cancel no-text with-tip', :data => {:action => 'cancel'}, :title => Spree.t('actions.cancel'), :style => 'display: none' %>

@@ -10,5 +10,6 @@ en:
     product_bundles: Product Bundles
     parts_included: Parts included
     part_of_bundle: 'Part of bundle %{sku}'
+    user_selectable: User selectable
     actions:
       delete: 'Delete'
